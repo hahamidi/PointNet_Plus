@@ -8,6 +8,15 @@ print(PointnetFPModule)
 class PointNet2SemSegSSG(nn.Module):
 
 
+
+    def __init__(self, hparams):
+        super().__init__()
+        self.hparams = hparams
+        self.flag = 1
+            # self.metric_moiu = MeanIoU(num_classes=13)
+        self._build_model()
+
+        
     def _build_model(self):
         self.SA_modules = nn.ModuleList()
         self.SA_modules.append(

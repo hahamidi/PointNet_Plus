@@ -1,0 +1,3 @@
+task_model:
+    class: model_ssg.PointNet2SemSegSSG
+    name: sem-ssg

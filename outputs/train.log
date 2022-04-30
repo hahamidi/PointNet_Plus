@@ -1,0 +1,8 @@
+[2022-04-30 13:26:01,117][hydra.utils][ERROR] - Error instantiating model_ssg.PointNet2SemSegSSG : Class PointNet2SemSegSSG is not in module model_ssg
+[2022-04-30 13:26:28,984][hydra.utils][ERROR] - Error instantiating model_ssg.PointNet2SemSegSSG : No module named 'pointnet2_ops'
+[2022-04-30 13:27:28,551][hydra.utils][ERROR] - Error instantiating model_ssg.PointNet2SemSegSSG : No module named 'pointnet2_ops'
+[2022-04-30 13:28:02,268][hydra.utils][ERROR] - Error instantiating model_ssg.PointNet2SemSegSSG : No module named 'pointnet2_ops'
+[2022-04-30 13:29:58,184][hydra.utils][ERROR] - Error instantiating model_ssg.PointNet2SemSegSSG : No module named 'pointnet2_modules'
+[2022-04-30 13:33:38,427][hydra.utils][ERROR] - Error instantiating model_ssg.PointNet2SemSegSSG : No module named 'pointnet2_modules'
+[2022-04-30 13:34:45,389][hydra.utils][ERROR] - Error instantiating model_ssg.PointNet2SemSegSSG : No module named 'pointnet2_ops'
+[2022-04-30 13:35:32,994][hydra.utils][ERROR] - Error instantiating model_ssg.PointNet2SemSegSSG : CUDA_HOME environment variable is not set. Please set it to your CUDA install root.

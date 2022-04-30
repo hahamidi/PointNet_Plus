@@ -1,0 +1,18 @@
+batch_size: 24
+distrib_backend: dp
+epochs: 50
+gpus:
+- 0
+model:
+  use_xyz: true
+num_points: 4096
+optimizer:
+  bn_momentum: 0.5
+  bnm_decay: 0.5
+  decay_step: 300000.0
+  lr: 0.001
+  lr_decay: 0.5
+  weight_decay: 0.0
+task_model:
+  class: model_ssg.PointNet2SemSegSSG
+  name: sem-ssg

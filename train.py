@@ -10,7 +10,7 @@ sys.path.insert(0,pointnet2_ops_lib_dir)
 
 import hydra
 import omegaconf
-import pytorch_lightning as pl
+# import pytorch_lightning as pl
 import torch
 # from pytorch_lightning.loggers import TensorBoardLogger
 # from surgeon_pytorch import Inspect,get_layers

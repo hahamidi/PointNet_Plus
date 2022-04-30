@@ -16,7 +16,6 @@ class PointNet2SemSegSSG(nn.Module):
             # self.metric_moiu = MeanIoU(num_classes=13)
         self._build_model()
 
-        
     def _build_model(self):
         self.SA_modules = nn.ModuleList()
         self.SA_modules.append(

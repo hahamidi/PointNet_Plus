@@ -12,7 +12,7 @@ import hydra
 import omegaconf
 import pytorch_lightning as pl
 import torch
-from pytorch_lightning.loggers import TensorBoardLogger
+# from pytorch_lightning.loggers import TensorBoardLogger
 # from surgeon_pytorch import Inspect,get_layers
 
 torch.backends.cudnn.enabled = True
@@ -39,6 +39,7 @@ def hydra_params_to_dotdict(hparams):
 def main(cfg):
     model = hydra.utils.instantiate(cfg.task_model, hydra_params_to_dotdict(cfg))
     print(cfg)
+    print(model)
     
     # early_stop_callback = pl.callbacks.EarlyStopping(patience=5)
     # checkpoint_callback = pl.callbacks.ModelCheckpoint(

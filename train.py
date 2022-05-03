@@ -1,3 +1,11 @@
+
+
+# {'gpus': [0], 'optimizer': {'weight_decay': 0.0, 'lr': 0.001, 'lr_decay': 0.5, 'bn_momentum': 0.5, 'bnm_decay': 0.5,
+#  'decay_step': 300000.0}, 'task_model': {'class': 'model_ssg.PointNet2SemSegSSG', 'name': 'sem-ssg'},
+#   'model': {'use_xyz': True}, 'distrib_backend': 'dp', 'num_points': 4096, 'epochs': 50, 'batch_size': 24}
+
+
+
 import os
 import sys
 
@@ -10,8 +18,12 @@ sys.path.insert(0,pointnet2_ops_lib_dir)
 
 import hydra
 import omegaconf
-# import pytorch_lightning as pl
 import torch
+import numpy as np
+import tqdm
+from data.Indoor3DSemSegLoader import fakeIndoor3DSemSeg
+from torch.utils.data import DataLoader
+
 # from pytorch_lightning.loggers import TensorBoardLogger
 # from surgeon_pytorch import Inspect,get_layers
 
@@ -35,34 +47,173 @@ def hydra_params_to_dotdict(hparams):
     return _to_dot_dict(hparams)
 
 
+class Trainer:
+    def __init__(self,
+                 model: torch.nn.Module,
+                 device: torch.device,
+                 criterion: torch.nn.Module,
+                 optimizer: torch.optim.Optimizer,
+                 training_DataLoader: torch.utils.data.Dataset,
+                 validation_DataLoader: torch.utils.data.Dataset = None,
+                 lr_scheduler: torch.optim.lr_scheduler = None,
+                 epochs: int = 100,
+                 epoch: int = 0,
+                 notebook: bool = False
+                 ):
+
+        self.model = model
+        self.criterion = criterion
+        self.optimizer = optimizer
+        self.lr_scheduler = lr_scheduler
+        self.training_DataLoader = training_DataLoader
+        self.validation_DataLoader = validation_DataLoader
+        self.device = device
+        self.epochs = epochs
+        self.epoch = epoch
+        self.notebook = notebook
+
+        self.training_loss = []
+        self.validation_loss = []
+        self.learning_rate = []
+
+    def run_trainer(self):
+
+        if self.notebook:
+            from tqdm.notebook import tqdm, trange
+        else:
+            from tqdm import tqdm, trange
+
+        progressbar = trange(self.epochs, desc='Progress')
+        for i in progressbar:
+            """Epoch counter"""
+            self.epoch += 1  # epoch counter
+
+            """Training block"""
+            self._train()
+
+            """Validation block"""
+            if self.validation_DataLoader is not None:
+                self._validate()
+
+            """Learning rate scheduler block"""
+            if self.lr_scheduler is not None:
+                if self.validation_DataLoader is not None and self.lr_scheduler.__class__.__name__ == 'ReduceLROnPlateau':
+                    self.lr_scheduler.batch(self.validation_loss[i])  # learning rate scheduler step with validation loss
+                else:
+                    self.lr_scheduler.batch()  # learning rate scheduler step
+        return self.training_loss, self.validation_loss, self.learning_rate
+
+    def _train(self):
+
+        if self.notebook:
+            from tqdm.notebook import tqdm, trange
+        else:
+            from tqdm import tqdm, trange
+
+        self.model.train()  # train mode
+        train_losses = []  # accumulate the losses here
+        batch_iter = tqdm(enumerate(self.training_DataLoader), 'Training', total=len(self.training_DataLoader),
+                          leave=False)
+
+        for i, (x, y) in batch_iter:
+            input, target = x.to(self.device), y.to(self.device)  # send to device (GPU or CPU)
+            self.optimizer.zero_grad()  # zerograd the parameters
+            out = self.model(input)  # one forward pass
+            loss = self.criterion(out, target)  # calculate loss
+            loss_value = loss.item()
+            train_losses.append(loss_value)
+            loss.backward()  # one backward pass
+            self.optimizer.step()  # update the parameters
+
+            batch_iter.set_description(f'Training: (loss {loss_value:.4f})')  # update progressbar
+
+        self.training_loss.append(np.mean(train_losses))
+        self.learning_rate.append(self.optimizer.param_groups[0]['lr'])
+
+        batch_iter.close()
+
+    def _validate(self):
+
+        if self.notebook:
+            from tqdm.notebook import tqdm, trange
+        else:
+            from tqdm import tqdm, trange
+
+        self.model.eval()  # evaluation mode
+        valid_losses = []  # accumulate the losses here
+        batch_iter = tqdm(enumerate(self.validation_DataLoader), 'Validation', total=len(self.validation_DataLoader),
+                          leave=False)
+
+        for i, (x, y) in batch_iter:
+            input, target = x.to(self.device), y.to(self.device)  # send to device (GPU or CPU)
+
+            with torch.no_grad():
+                out = self.model(input)
+                loss = self.criterion(out, target)
+                loss_value = loss.item()
+                valid_losses.append(loss_value)
+
+                batch_iter.set_description(f'Validation: (loss {loss_value:.4f})')
+
+        self.validation_loss.append(np.mean(valid_losses))
+
+        batch_iter.close()
+
+
+
 @hydra.main("config/config.yaml")
 def main(cfg):
-    model = hydra.utils.instantiate(cfg.task_model, hydra_params_to_dotdict(cfg))
-    print(cfg)
-    print(model)
-    
-    # early_stop_callback = pl.callbacks.EarlyStopping(patience=5)
-    # checkpoint_callback = pl.callbacks.ModelCheckpoint(
-    #     monitor="val_acc",
-    #     mode="max",
-    #     save_top_k=2,
-    #     filepath=os.path.join(
-    #         cfg.task_model.name, "{epoch}-{val_loss:.2f}-{val_acc:.3f}"
-    #     ),
-    #     verbose=True,
-    # )
-    # trainer = pl.Trainer(
-    #     gpus=list(cfg.gpus),
-    #     max_epochs=cfg.epochs,
-    #     early_stop_callback=early_stop_callback,
-    #     checkpoint_callback=checkpoint_callback,
-    #     distributed_backend=cfg.distrib_backend
-    # )
+    hypers = hydra_params_to_dotdict(cfg)
+    model = hydra.utils.instantiate(cfg.task_model,hypers)
+    # print(cfg)
+    # print(model)
 
-    # print(get_layers(model))
-    # # trainer.fit(model)
-    # # trainer.test(model)
+
+
+    data_set_train = fakeIndoor3DSemSeg()
+    data_set_test  = fakeIndoor3DSemSeg()
+    data_set_eval  = fakeIndoor3DSemSeg()
+
+
+    data_loader_train =  DataLoader(data_set_train, batch_size=32, shuffle=False, sampler=None,
+           batch_sampler=None, num_workers=2)
+    data_loader_test  = DataLoader(data_set_test, batch_size=32, shuffle=False, sampler=None,
+           batch_sampler=None, num_workers=2)
+    data_loader_eval  = DataLoader(data_set_eval, batch_size=32, shuffle=False, sampler=None,
+           batch_sampler=None, num_workers=2)
+
+           
+    if torch.cuda.is_available():
+         device = torch.device('cuda')
+    else:
+         torch.device('cpu')
+
+
     
+
+    criterion = torch.nn.CrossEntropyLoss()
+
+    # optimizer
+    optimizer = torch.optim.Adam(model.parameters(), lr=hypers["lr"],weight_decay= hypers["lr_decay"])
+
+    # trainer
+    trainer = Trainer(model=model,
+                    device=device,
+                    criterion=criterion,
+                    optimizer=optimizer,
+                    training_DataLoader=data_loader_train,
+                    validation_DataLoader=data_loader_eval,
+                    lr_scheduler=None,
+                    epochs=2,
+                    epoch=0,
+                    notebook=True)
+
+    # start training
+    training_losses, validation_losses, lr_rates = trainer.run_trainer()
+
+
+
+
 
 
 if __name__ == "__main__":

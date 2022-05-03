@@ -164,7 +164,6 @@ class Trainer:
 @hydra.main("config/config.yaml")
 def main(cfg):
     hypers = hydra_params_to_dotdict(cfg)
-    model = hydra.utils.instantiate(cfg.task_model,hypers)
     # print(cfg)
     # print(model)
 
@@ -187,10 +186,8 @@ def main(cfg):
          device = torch.device('cuda')
     else:
          torch.device('cpu')
-
-
     
-
+    model = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
     criterion = torch.nn.CrossEntropyLoss()
 
     # optimizer

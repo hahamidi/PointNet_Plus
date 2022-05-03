@@ -194,7 +194,7 @@ def main(cfg):
     criterion = torch.nn.CrossEntropyLoss()
 
     # optimizer
-    optimizer = torch.optim.Adam(model.parameters(), lr=hypers["lr"],weight_decay= hypers["lr_decay"])
+    optimizer = torch.optim.Adam(model.parameters(), lr=hypers["optimizer.lr"],weight_decay= hypers["optimizer.lr_decay"])
 
     # trainer
     trainer = Trainer(model=model,

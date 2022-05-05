@@ -21,7 +21,7 @@ import omegaconf
 import torch
 import numpy as np
 
-from data.Indoor3DSemSegLoader import fakeIndoor3DSemSeg
+from data.Indoor3DSemSegLoader import fakeIndoor3DSemSeg,Indoor3DSemSeg
 from torch.utils.data import DataLoader
 
 # from pytorch_lightning.loggers import TensorBoardLogger
@@ -169,16 +169,16 @@ def main(cfg):
 
 
 
-    data_set_train = fakeIndoor3DSemSeg()
-    data_set_test  = fakeIndoor3DSemSeg()
-    data_set_eval  = fakeIndoor3DSemSeg()
+    data_set_train = Indoor3DSemSeg()
+    data_set_test  = Indoor3DSemSeg()
+    data_set_eval  = Indoor3DSemSeg()
 
 
-    data_loader_train =  DataLoader(data_set_train, batch_size=32, shuffle=False, sampler=None,
+    data_loader_train =  DataLoader(data_set_train, batch_size=24, shuffle=False, sampler=None,
            batch_sampler=None, num_workers=2)
-    data_loader_test  = DataLoader(data_set_test, batch_size=32, shuffle=False, sampler=None,
+    data_loader_test  = DataLoader(data_set_test, batch_size=24, shuffle=False, sampler=None,
            batch_sampler=None, num_workers=2)
-    data_loader_eval  = DataLoader(data_set_eval, batch_size=32, shuffle=False, sampler=None,
+    data_loader_eval  = DataLoader(data_set_eval, batch_size=24, shuffle=False, sampler=None,
            batch_sampler=None, num_workers=2)
 
            

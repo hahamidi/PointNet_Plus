@@ -112,7 +112,7 @@ class Trainer:
 
         self.model.train()  # train mode
         train_losses = []  # accumulate the losses here
-        batch_iter = tqdm(enumerate(self.training_DataLoader), 'Training', total=len(self.training_DataLoader),
+        batch_iter = tqdm(self.training_DataLoader, 'Training', total=len(self.training_DataLoader),
                           leave=False)
 
         for i, (x, y) in batch_iter:
@@ -141,7 +141,7 @@ class Trainer:
 
         self.model.eval()  # evaluation mode
         valid_losses = []  # accumulate the losses here
-        batch_iter = tqdm(enumerate(self.validation_DataLoader), 'Validation', total=len(self.validation_DataLoader),
+        batch_iter = tqdm(self.validation_DataLoader, 'Validation', total=len(self.validation_DataLoader),
                           leave=False)
 
         for i, (x, y) in batch_iter:

@@ -103,7 +103,7 @@ class Trainer:
                     self.lr_scheduler.batch(self.validation_loss[i])  # learning rate scheduler step with validation loss
                 else:
                     self.lr_scheduler.batch()  # learning rate scheduler step
-            print("train_loss:",self.training_loss,"\n","val_loss:", self.validation_loss)
+            print("train_loss:",self.training_loss,"\n","val_loss:", self.validation_loss , "lr:","\n",self.learning_rate)
         return self.training_loss, self.validation_loss, self.learning_rate
 
     def _train(self):
@@ -192,7 +192,7 @@ def main(cfg):
 
 
     # optimizer
-    optimizer = torch.optim.Adam(model.parameters(), lr=hypers["optimizer.lr"],weight_decay= hypers["optimizer.lr_decay"])
+    optimizer = torch.optim.Adam(model.parameters(), lr=hypers["optimizer.lr"]) #weight_decay= hypers["optimizer.lr_decay"]
 
     # trainer
  

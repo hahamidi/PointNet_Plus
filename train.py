@@ -20,7 +20,7 @@ import hydra
 import omegaconf
 import torch
 import numpy as np
-import tqdm
+
 from data.Indoor3DSemSegLoader import fakeIndoor3DSemSeg
 from torch.utils.data import DataLoader
 
@@ -129,7 +129,7 @@ class Trainer:
 
         self.training_loss.append(np.mean(train_losses))
         self.learning_rate.append(self.optimizer.param_groups[0]['lr'])
-
+        print(train_losses)
         batch_iter.close()
 
     def _validate(self):

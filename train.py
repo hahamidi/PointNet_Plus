@@ -20,7 +20,8 @@ import hydra
 import omegaconf
 import torch
 import numpy as np
-
+import time
+from tqdm import tqdm, trange
 from data.Indoor3DSemSegLoader import fakeIndoor3DSemSeg,Indoor3DSemSeg
 from torch.utils.data import DataLoader
 
@@ -91,6 +92,7 @@ class Trainer:
             """Training block"""
             self._train()
 
+
             """Validation block"""
             if self.validation_DataLoader is not None:
                 self._validate()
@@ -101,25 +103,25 @@ class Trainer:
                     self.lr_scheduler.batch(self.validation_loss[i])  # learning rate scheduler step with validation loss
                 else:
                     self.lr_scheduler.batch()  # learning rate scheduler step
+            print("train_loss:",self.training_loss,"\n","val_loss:", self.validation_loss)
         return self.training_loss, self.validation_loss, self.learning_rate
 
     def _train(self):
 
-        if self.notebook:
-            from tqdm.notebook import tqdm, trange
-        else:
-            from tqdm import tqdm, trange
+
 
         self.model.train()  # train mode
         train_losses = []  # accumulate the losses here
         batch_iter = tqdm(enumerate(self.training_DataLoader), 'Training', total=len(self.training_DataLoader),
-                          leave=False)
+                           position=0, leave=True)
 
         for i, (x, y) in batch_iter:
+
             input, target = x.to(self.device), y.to(self.device)  # send to device (GPU or CPU)
             self.optimizer.zero_grad()  # zerograd the parameters
             out = self.model(input)  # one forward pass
             loss = self.criterion(out, target)  # calculate loss
+            
             loss_value = loss.item()
             train_losses.append(loss_value)
             loss.backward()  # one backward pass
@@ -129,20 +131,15 @@ class Trainer:
 
         self.training_loss.append(np.mean(train_losses))
         self.learning_rate.append(self.optimizer.param_groups[0]['lr'])
-        print(train_losses)
         batch_iter.close()
 
     def _validate(self):
 
-        if self.notebook:
-            from tqdm.notebook import tqdm, trange
-        else:
-            from tqdm import tqdm, trange
 
         self.model.eval()  # evaluation mode
         valid_losses = []  # accumulate the losses here
         batch_iter = tqdm(enumerate(self.validation_DataLoader), 'Validation', total=len(self.validation_DataLoader),
-                          leave=False)
+                           position=0, leave=True)
 
         for i, (x, y) in batch_iter:
             input, target = x.to(self.device), y.to(self.device)  # send to device (GPU or CPU)
@@ -169,9 +166,11 @@ def main(cfg):
 
 
 
-    data_set_train = Indoor3DSemSeg(num_points=4096)
+    data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[5])
     # data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
-    data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
+
+    data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[6])
+
 
 
     data_loader_train =  DataLoader(data_set_train, batch_size=24, shuffle=False, sampler=None,
@@ -181,19 +180,22 @@ def main(cfg):
     data_loader_eval  = DataLoader(data_set_eval, batch_size=24, shuffle=False, sampler=None,
            batch_sampler=None, num_workers=2)
 
-           
+   
     if torch.cuda.is_available():
          device = torch.device('cuda')
     else:
          torch.device('cpu')
-    
+
     model = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
+
     criterion = torch.nn.CrossEntropyLoss()
+
 
     # optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=hypers["optimizer.lr"],weight_decay= hypers["optimizer.lr_decay"])
 
     # trainer
+ 
     trainer = Trainer(model=model,
                     device=device,
                     criterion=criterion,
@@ -205,7 +207,9 @@ def main(cfg):
                     epoch=0,
                     notebook=True)
 
+
     # start training
+
     training_losses, validation_losses, lr_rates = trainer.run_trainer()
 
 

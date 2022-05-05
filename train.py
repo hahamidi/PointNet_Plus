@@ -169,9 +169,9 @@ def main(cfg):
 
 
 
-    data_set_train = Indoor3DSemSeg()
-    data_set_test  = Indoor3DSemSeg()
-    data_set_eval  = Indoor3DSemSeg()
+    data_set_train = Indoor3DSemSeg(num_points=4096)
+    data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
+    data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[6])
 
 
     data_loader_train =  DataLoader(data_set_train, batch_size=24, shuffle=False, sampler=None,

@@ -32,20 +32,20 @@ torch.backends.cudnn.enabled = True
 torch.backends.cudnn.benchmark = True
 
 
-# def hydra_params_to_dotdict(hparams):
-#     def _to_dot_dict(cfg):
-#         res = {}
-#         for k, v in cfg.items():
-#             if isinstance(v, omegaconf.DictConfig):
-#                 res.update(
-#                     {k + "." + subk: subv for subk, subv in _to_dot_dict(v).items()}
-#                 )
-#             elif isinstance(v, (str, int, float, bool)):
-#                 res[k] = v
+def hydra_params_to_dotdict(hparams):
+    def _to_dot_dict(cfg):
+        res = {}
+        for k, v in cfg.items():
+            if isinstance(v, omegaconf.DictConfig):
+                res.update(
+                    {k + "." + subk: subv for subk, subv in _to_dot_dict(v).items()}
+                )
+            elif isinstance(v, (str, int, float, bool)):
+                res[k] = v
 
-#         return res
+        return res
 
-#     return _to_dot_dict(hparams)
+    return _to_dot_dict(hparams)
 
 
 # class Trainer:

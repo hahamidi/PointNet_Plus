@@ -99,5 +99,5 @@ class PointNet2SemSegSSG(nn.Module):
             l_features[i - 1] = self.FP_modules[i](
                 l_xyz[i - 1], l_xyz[i], l_features[i - 1], l_features[i]
             )
-        print(l_features[0].size())
+
         return self.fc_lyaer(l_features[0])

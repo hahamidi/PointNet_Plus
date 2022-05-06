@@ -87,7 +87,7 @@ class Trainer:
         self.learning_rate = []
 
 
-        self.validation_acc = [0]
+        self.validation_acc = []
         self.training_acc = []
 
     def save_checkpoint(self,state,filename = "chechpoint.pth.tar"):

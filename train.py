@@ -83,6 +83,10 @@ class Trainer:
         self.validation_loss = []
         self.learning_rate = []
 
+
+        self.validation_acc = []
+        self.training_acc = []
+
     def run_trainer(self):
 
         if self.notebook:
@@ -91,7 +95,7 @@ class Trainer:
             from tqdm import tqdm, trange
 
         progressbar = trange(self.epochs, desc='Progress')
-        writer = SummaryWriter("loss_lr_logs")
+        # writer = SummaryWriter("loss_lr_logs")
         for i in progressbar:
             """Epoch counter"""
             self.epoch += 1  # epoch counter
@@ -111,9 +115,10 @@ class Trainer:
                 else:
                     self.lr_scheduler.batch()  # learning rate scheduler step
             logs = {"train_loss":self.training_loss[-1],"val_loss":self.validation_loss[-1],"lr":self.learning_rate[-1]}
-            writer.add_scalars("val_train_loss",logs, self.epoch)
-            print(logs)
-        writer.close()
+            logs_acc = {"training_acc":self.training_acc[-1],"val_acc":self.validation_acc[-1]}
+            # writer.add_scalars("train/loss",logs, self.epoch)
+            print(logs,logs_acc)
+        # writer.close()
         return self.training_loss, self.validation_loss, self.learning_rate
 
     def _train(self):
@@ -122,6 +127,7 @@ class Trainer:
 
         self.model.train()  # train mode
         train_losses = []  # accumulate the losses here
+        train_acc = []
         batch_iter = tqdm(enumerate(self.training_DataLoader), 'Training', total=len(self.training_DataLoader),
                            position=0, leave=True)
 
@@ -136,10 +142,15 @@ class Trainer:
             train_losses.append(loss_value)
             loss.backward()  # one backward pass
             self.optimizer.step()  # update the parameters
+            with torch.no_grad():
+                acc = (torch.argmax(out, dim=1) == target).float().mean()
+            train_acc.append(acc)
 
-            batch_iter.set_description(f'Training: (loss {loss_value:.4f})')  # update progressbar
+
+            batch_iter.set_description(f'Training: (loss {loss_value:.4f}) ,(acc {acc:.4f}) ')  # update progressbar
 
         self.training_loss.append(np.mean(train_losses))
+        self.training_acc.append(np.mean(train_acc))
         self.learning_rate.append(self.optimizer.param_groups[0]['lr'])
         batch_iter.close()
 
@@ -148,6 +159,7 @@ class Trainer:
 
         self.model.eval()  # evaluation mode
         valid_losses = []  # accumulate the losses here
+        valid_acc    = []
         batch_iter = tqdm(enumerate(self.validation_DataLoader), 'Validation', total=len(self.validation_DataLoader),
                            position=0, leave=True)
 
@@ -158,11 +170,13 @@ class Trainer:
                 out = self.model(input)
                 loss = self.criterion(out, target)
                 loss_value = loss.item()
+                acc = (torch.argmax(out, dim=1) == target).float().mean()
                 valid_losses.append(loss_value)
-
-                batch_iter.set_description(f'Validation: (loss {loss_value:.4f})')
+                valid_acc.append(acc)
+                batch_iter.set_description(f'Validation: (loss {loss_value:.4f}) , (acc {acc:.4f})')
 
         self.validation_loss.append(np.mean(valid_losses))
+        self.validation_acc.append(np.mean(valid_acc))
 
         batch_iter.close()
 

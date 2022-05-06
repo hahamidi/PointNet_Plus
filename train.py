@@ -87,7 +87,7 @@ class Trainer:
         self.learning_rate = []
 
 
-        self.validation_acc = []
+        self.validation_acc = [0]
         self.training_acc = []
 
     def save_checkpoint(self,state,filename = "chechpoint.pth.tar"):
@@ -130,12 +130,12 @@ class Trainer:
             print("epoch_num:",i,"\n")
             print("=>",logs,"\n","=>",logs_acc)
             print("---------------------------------------------------------------------------------")
-            if sorted(self.training_acc)[1] > self.training_acc[-1] :
+            if sorted(self.validation_acc)[1] > self.validation_acc[-1] :
 
                 state = {'epoch': self.epoch,
                          'state_dict': self.model.state_dict(),
                          'optimizer': self.optimizer.state_dict()}
-                self.save_checkpoint(state,filename= "acc:"+str( self.training_acc[-1])+"chechpoint.pth.tar")
+                self.save_checkpoint(state,filename= "acc:"+str( self.validation_acc[-1])+"chechpoint.pth.tar")
 
 
         # writer.close()

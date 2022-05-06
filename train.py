@@ -66,7 +66,8 @@ class Trainer:
                  epochs: int = 100,
                  epoch: int = 0,
                  notebook: bool = False,
-                 save_best_model : int = 1
+                 save_best_model : int = 1,
+                 load_checkpoint : bool = True
                  ):
 
         self.model = model
@@ -80,19 +81,33 @@ class Trainer:
         self.epoch = epoch
         self.notebook = notebook
         self.save_best_model = save_best_model
+        self.load_checkpoint = load_checkpoint
         
     
         self.training_loss = []
         self.validation_loss = []
         self.learning_rate = []
 
-
+        self.last_model = ""
         self.validation_acc = []
         self.training_acc = []
 
     def save_checkpoint(self,state,filename = "chechpoint.pth.tar"):
         print("**************saving model****************")
+        filename =main_dir+"/"+filename
         torch.save(state,filename)
+        self.last_model = filename
+
+
+    def load_from_checkpoint(self , checkpoint = "" ):
+        print("++++++++++++++loading_model++++++++++++++++")
+        if checkpoint == "":
+            checkpoint =  torch.load(self.last_model)
+        self.model.load_state_dict(checkpoint["state_dict"])
+        self.optimizer.load_state_dict(checkpoint["optimizer"])
+        
+
+
 
     def run_trainer(self):
 
@@ -104,6 +119,10 @@ class Trainer:
 
         progressbar = trange(self.epochs, desc='Progress')
         # writer = SummaryWriter("loss_lr_logs")
+        if self.load_checkpoint == True:
+            self . load_from_checkpoint(torch.load(self.last_model))
+
+
         for i in progressbar:
             """Epoch counter"""
             self.epoch += 1  # epoch counter
@@ -130,6 +149,7 @@ class Trainer:
             print("epoch_num:",i,"\n")
             print("=>",logs,"\n","=>",logs_acc)
             print("---------------------------------------------------------------------------------")
+        
             
             if sorted(self.validation_acc)[-1 * self.save_best_model] <=  self.validation_acc[-1] :
 
@@ -138,7 +158,7 @@ class Trainer:
                                 'optimizer': self.optimizer.state_dict()}
                 self.save_checkpoint(state,filename= f"acc: {self.validation_acc[-1]:.4f} chechpoint.pth.tar")
 
-
+            
         # writer.close()
         return self.training_loss, self.validation_loss, self.learning_rate
 

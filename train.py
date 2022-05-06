@@ -67,7 +67,7 @@ class Trainer:
                  epoch: int = 0,
                  notebook: bool = False,
                  save_best_model : int = 1,
-                 load_checkpoint : bool = True
+                 load_checkpoint : bool = False
                  ):
 
         self.model = model
@@ -87,14 +87,14 @@ class Trainer:
         self.training_loss = []
         self.validation_loss = []
         self.learning_rate = []
-
         self.last_model = ""
         self.validation_acc = []
         self.training_acc = []
 
     def save_checkpoint(self,state,filename = "chechpoint.pth.tar"):
         print("**************saving model****************")
-        filename =main_dir+"/"+filename
+        print(pointnet2_dir)
+        filename =pointnet2_dir+"/checkpoints/"+filename
         torch.save(state,filename)
         self.last_model = filename
 

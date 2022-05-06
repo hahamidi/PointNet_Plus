@@ -130,7 +130,7 @@ class Trainer:
             print("epoch_num:",i,"\n")
             print("=>",logs,"\n","=>",logs_acc)
             print("---------------------------------------------------------------------------------")
-            if sorted(self.validation_acc)[1] > self.validation_acc[-1] :
+            if sorted(self.validation_acc)[-2] <  self.validation_acc[-1] :
 
                 state = {'epoch': self.epoch,
                          'state_dict': self.model.state_dict(),

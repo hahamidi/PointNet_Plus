@@ -25,6 +25,12 @@ from tqdm import tqdm, trange
 from data.Indoor3DSemSegLoader import fakeIndoor3DSemSeg,Indoor3DSemSeg
 from torch.utils.data import DataLoader
 
+
+
+import torch
+from torch.utils.tensorboard import SummaryWriter
+writer = SummaryWriter()
+
 # from pytorch_lightning.loggers import TensorBoardLogger
 # from surgeon_pytorch import Inspect,get_layers
 
@@ -85,6 +91,7 @@ class Trainer:
             from tqdm import tqdm, trange
 
         progressbar = trange(self.epochs, desc='Progress')
+        writer = SummaryWriter("loss_lr_logs")
         for i in progressbar:
             """Epoch counter"""
             self.epoch += 1  # epoch counter
@@ -103,7 +110,9 @@ class Trainer:
                     self.lr_scheduler.batch(self.validation_loss[i])  # learning rate scheduler step with validation loss
                 else:
                     self.lr_scheduler.batch()  # learning rate scheduler step
-            print("train_loss:",self.training_loss,"\n","val_loss:", self.validation_loss , "lr:","\n",self.learning_rate)
+                writer.add_scalar("val_train_loss",{"train_loss":self.training_loss[-1],"val_loss":self.validation_loss[-1],"lr":self.learning_rate[-1]})
+            # print("train_loss:",self.training_loss,"\n","val_loss:", self.validation_loss , "lr:","\n",self.learning_rate)
+        writer.close()
         return self.training_loss, self.validation_loss, self.learning_rate
 
     def _train(self):
@@ -166,10 +175,18 @@ def main(cfg):
 
 
 
-    data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[5])
+    # data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[5])
+    # # data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
+
+    # data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[6])
+
+
+
+
+    data_set_train = fakeIndoor3DSemSeg()
     # data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
 
-    data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[6])
+    data_set_eval  = fakeIndoor3DSemSeg()
 
 
 
@@ -183,8 +200,10 @@ def main(cfg):
    
     if torch.cuda.is_available():
          device = torch.device('cuda')
+        
     else:
          torch.device('cpu')
+
 
     model = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
 

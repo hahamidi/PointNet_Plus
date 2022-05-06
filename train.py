@@ -204,16 +204,16 @@ def main(cfg):
 
 
 
-    data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[5])
-    # data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
+    # data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[5])
+    # # data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
 
-    data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[6])
-
-
+    # data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[6])
 
 
-    # data_set_train = fakeIndoor3DSemSeg()
-    # data_set_eval  = fakeIndoor3DSemSeg()
+
+
+    data_set_train = fakeIndoor3DSemSeg()
+    data_set_eval  = fakeIndoor3DSemSeg()
 
 
 

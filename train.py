@@ -130,12 +130,13 @@ class Trainer:
             print("epoch_num:",i,"\n")
             print("=>",logs,"\n","=>",logs_acc)
             print("---------------------------------------------------------------------------------")
-            if sorted(self.validation_acc)[-2] <  self.validation_acc[-1] :
+            if self.epoch >= self.save_best_model:
+                    if sorted(self.validation_acc)[-1 * self.save_best_model] <  self.validation_acc[-1] :
 
-                state = {'epoch': self.epoch,
-                         'state_dict': self.model.state_dict(),
-                         'optimizer': self.optimizer.state_dict()}
-                self.save_checkpoint(state,filename= "acc:"+str( self.validation_acc[-1])+"chechpoint.pth.tar")
+                        state = {'epoch': self.epoch,
+                                'state_dict': self.model.state_dict(),
+                                'optimizer': self.optimizer.state_dict()}
+                        self.save_checkpoint(state,filename= "acc: {self.validation_acc[-1]:.4f} chechpoint.pth.tar")
 
 
         # writer.close()

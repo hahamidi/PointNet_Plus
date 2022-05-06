@@ -239,7 +239,7 @@ def main(cfg):
                     training_DataLoader=data_loader_train,
                     validation_DataLoader=data_loader_eval,
                     lr_scheduler=None,
-                    epochs=hypers["model.epoch"],
+                    epochs=hypers["distrib_backend.epochs"],
                     epoch=0,
                     notebook=True)
 

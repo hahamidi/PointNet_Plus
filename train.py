@@ -110,8 +110,9 @@ class Trainer:
                     self.lr_scheduler.batch(self.validation_loss[i])  # learning rate scheduler step with validation loss
                 else:
                     self.lr_scheduler.batch()  # learning rate scheduler step
-            writer.add_scalars("val_train_loss",{"train_loss":self.training_loss[-1],"val_loss":self.validation_loss[-1],"lr":self.learning_rate[-1]}, self.epoch)
-            # print("train_loss:",self.training_loss,"\n","val_loss:", self.validation_loss , "lr:","\n",self.learning_rate)
+            logs = {"train_loss":self.training_loss[-1],"val_loss":self.validation_loss[-1],"lr":self.learning_rate[-1]}
+            writer.add_scalars("val_train_loss",logs, self.epoch)
+            print(logs)
         writer.close()
         return self.training_loss, self.validation_loss, self.learning_rate
 

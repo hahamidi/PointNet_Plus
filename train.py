@@ -118,6 +118,7 @@ class Trainer:
             logs_acc = {"training_acc":self.training_acc[-1],"val_acc":self.validation_acc[-1]}
             # writer.add_scalars("train/loss",logs, self.epoch)
             print("---------------------------------------------------------------------------------")
+            print("epoch_num:",i,"\n")
             print("=>",logs,"\n","=>",logs_acc)
             print("---------------------------------------------------------------------------------")
         # writer.close()
@@ -239,7 +240,7 @@ def main(cfg):
                     training_DataLoader=data_loader_train,
                     validation_DataLoader=data_loader_eval,
                     lr_scheduler=None,
-                    epochs=hypers["distrib_backend.epochs"],
+                    epochs=hypers["epochs"],
                     epoch=0,
                     notebook=True)
 

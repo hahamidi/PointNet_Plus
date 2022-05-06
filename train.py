@@ -89,12 +89,13 @@ class Trainer:
 
         self.validation_acc = []
         self.training_acc = []
-    def checkpoint(state,filename = "chechpoint.pth.tar"):
-        print("->saving model")
+
+    def save_checkpoint(self,state,filename = "chechpoint.pth.tar"):
+        print("*----->saving model")
         torch.save(state,filename)
 
-
     def run_trainer(self):
+
 
         if self.notebook:
             from tqdm.notebook import tqdm, trange
@@ -129,12 +130,13 @@ class Trainer:
             print("epoch_num:",i,"\n")
             print("=>",logs,"\n","=>",logs_acc)
             print("---------------------------------------------------------------------------------")
-            if self.epoch == 1 :
+            if sorted(self.training_acc)[1] > self.training_acc[-1] :
 
                 state = {'epoch': self.epoch,
                          'state_dict': self.model.state_dict(),
                          'optimizer': self.optimizer.state_dict()}
-                torch.save(state, "save_model.tar")
+                self.save_checkpoint(state,filename= "acc:"+str( self.training_acc[-1])+"chechpoint.pth.tar")
+
 
         # writer.close()
         return self.training_loss, self.validation_loss, self.learning_rate

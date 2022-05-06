@@ -91,7 +91,7 @@ class Trainer:
         self.training_acc = []
 
     def save_checkpoint(self,state,filename = "chechpoint.pth.tar"):
-        print("*----->saving model")
+        print("**************saving model****************")
         torch.save(state,filename)
 
     def run_trainer(self):
@@ -136,7 +136,7 @@ class Trainer:
                 state = {'epoch': self.epoch,
                                 'state_dict': self.model.state_dict(),
                                 'optimizer': self.optimizer.state_dict()}
-                self.save_checkpoint(state,filename= "acc: {self.validation_acc[-1]:.4f} chechpoint.pth.tar")
+                self.save_checkpoint(state,filename= f"acc: {self.validation_acc[-1]:.4f} chechpoint.pth.tar")
 
 
         # writer.close()

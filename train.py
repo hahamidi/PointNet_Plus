@@ -130,8 +130,12 @@ class Trainer:
             print("=>",logs,"\n","=>",logs_acc)
             print("---------------------------------------------------------------------------------")
             if self.epoch == 1 :
-                checkpoint = {"state_dict": self.model.state_dict(),"optimizer":self.optimizer.state_dict()}
-                self.checkpoint(checkpoint)
+
+                state = {'epoch': self.epoch,
+                         'state_dict': self.model.state_dict(),
+                         'optimizer': self.optimizer.state_dict()}
+                torch.save(state, "save_model.tar")
+
         # writer.close()
         return self.training_loss, self.validation_loss, self.learning_rate
 

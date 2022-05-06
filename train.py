@@ -65,7 +65,8 @@ class Trainer:
                  lr_scheduler: torch.optim.lr_scheduler = None,
                  epochs: int = 100,
                  epoch: int = 0,
-                 notebook: bool = False
+                 notebook: bool = False,
+                 save_best_model : int = 2
                  ):
 
         self.model = model
@@ -78,7 +79,9 @@ class Trainer:
         self.epochs = epochs
         self.epoch = epoch
         self.notebook = notebook
-
+        self.save_best_model = save_best_model
+        
+    
         self.training_loss = []
         self.validation_loss = []
         self.learning_rate = []
@@ -86,6 +89,10 @@ class Trainer:
 
         self.validation_acc = []
         self.training_acc = []
+    def checkpoint(state,filename = "chechpoint.pth.tar"):
+        print("->saving model")
+        torch.save(state,filename)
+
 
     def run_trainer(self):
 
@@ -107,6 +114,7 @@ class Trainer:
             """Validation block"""
             if self.validation_DataLoader is not None:
                 self._validate()
+            
 
             """Learning rate scheduler block"""
             if self.lr_scheduler is not None:
@@ -121,6 +129,9 @@ class Trainer:
             print("epoch_num:",i,"\n")
             print("=>",logs,"\n","=>",logs_acc)
             print("---------------------------------------------------------------------------------")
+            if self.epoch == 1 :
+                checkpoint = {"state_dict": self.model.state_dict(),"optimizer":self.optimizer.state_dict()}
+                self.checkpoint(checkpoint)
         # writer.close()
         return self.training_loss, self.validation_loss, self.learning_rate
 

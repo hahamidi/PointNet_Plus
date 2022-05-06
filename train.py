@@ -117,7 +117,9 @@ class Trainer:
             logs = {"train_loss":self.training_loss[-1],"val_loss":self.validation_loss[-1],"lr":self.learning_rate[-1]}
             logs_acc = {"training_acc":self.training_acc[-1],"val_acc":self.validation_acc[-1]}
             # writer.add_scalars("train/loss",logs, self.epoch)
-            print(logs,logs_acc)
+            print("---------------------------------------------------------------------------------")
+            print("=>",logs,"\n","=>",logs_acc)
+            print("---------------------------------------------------------------------------------")
         # writer.close()
         return self.training_loss, self.validation_loss, self.learning_rate
 
@@ -144,7 +146,7 @@ class Trainer:
             self.optimizer.step()  # update the parameters
             with torch.no_grad():
                 acc = (torch.argmax(out, dim=1) == target).float().mean()
-            train_acc.append(acc)
+            train_acc.append(acc.item())
 
 
             batch_iter.set_description(f'Training: (loss {loss_value:.4f}) ,(acc {acc:.4f}) ')  # update progressbar
@@ -172,7 +174,7 @@ class Trainer:
                 loss_value = loss.item()
                 acc = (torch.argmax(out, dim=1) == target).float().mean()
                 valid_losses.append(loss_value)
-                valid_acc.append(acc)
+                valid_acc.append(acc.item())
                 batch_iter.set_description(f'Validation: (loss {loss_value:.4f}) , (acc {acc:.4f})')
 
         self.validation_loss.append(np.mean(valid_losses))
@@ -237,7 +239,7 @@ def main(cfg):
                     training_DataLoader=data_loader_train,
                     validation_DataLoader=data_loader_eval,
                     lr_scheduler=None,
-                    epochs=10,
+                    epochs=hypers["model.epoch"],
                     epoch=0,
                     notebook=True)
 

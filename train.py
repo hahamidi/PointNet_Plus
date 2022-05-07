@@ -284,6 +284,8 @@ def main(cfg):
     # start training
 
     training_losses, validation_losses, lr_rates = trainer.run_trainer()
+    #test
+    
 
 
 

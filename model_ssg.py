@@ -100,4 +100,8 @@ class PointNet2SemSegSSG(nn.Module):
                 l_xyz[i - 1], l_xyz[i], l_features[i - 1], l_features[i]
             )
 
-        return self.fc_lyaer(l_features[0])
+        classification = self.fc_lyaer(l_features[0])
+        print(l_features[0].size())
+        print(classification.size())
+        return classification
+        

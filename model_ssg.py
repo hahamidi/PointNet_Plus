@@ -66,7 +66,7 @@ class PointNet2SemSegSSG(nn.Module):
             nn.BatchNorm1d(128),
             nn.ReLU(True),
             nn.Dropout(0.5),
-            nn.Conv1d(128, 13, kernel_size=1),
+            nn.Conv1d(128,64 , kernel_size=1),
         )
 
     def _break_up_pc(self, pc):

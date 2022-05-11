@@ -152,12 +152,12 @@ class Trainer:
             print("---------------------------------------------------------------------------------")
         
             
-            if sorted(self.validation_acc)[-1 * self.save_best_model] <=  self.validation_acc[-1] :
+            # if sorted(self.validation_acc)[-1 * self.save_best_model] <=  self.validation_acc[-1] :
 
-                state = {'epoch': self.epoch,
-                                'state_dict': self.model.state_dict(),
-                                'optimizer': self.optimizer.state_dict()}
-                self.save_checkpoint(state,filename= f"acc: {self.validation_acc[-1]:.4f} chechpoint.pth.tar")
+            #     state = {'epoch': self.epoch,
+            #                     'state_dict': self.model.state_dict(),
+            #                     'optimizer': self.optimizer.state_dict()}
+            #     self.save_checkpoint(state,filename= f"acc: {self.validation_acc[-1]:.4f} chechpoint.pth.tar")
 
             
         # writer.close()

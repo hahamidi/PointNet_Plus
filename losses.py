@@ -24,6 +24,8 @@ class Contrast_loss_point_cloud(nn.Module):
                 posetives = (mask * dot_products).sum(1) / mask.sum(1)
                 # print(negetives,posetives)
 #                 posetives = torch.div(posetives,temperature)
+                print("p:",posetives)
+                print("n:",negetives)
                 diviation = posetives / (posetives + negetives)
                 print("=>",diviation)
                 diviation = - torch.log(diviation)

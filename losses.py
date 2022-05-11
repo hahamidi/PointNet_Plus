@@ -23,5 +23,6 @@ class Contrast_loss_point_cloud(nn.Module):
                 diviation = - torch.log(posetives / (posetives + negetives))
                 loss = torch.mean(diviation)
                 all_loss.append(loss)
+            print(all_loss)
             all_loss = torch.stack(all_loss)
             return torch.mean(all_loss)

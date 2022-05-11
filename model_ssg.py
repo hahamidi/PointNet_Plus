@@ -93,10 +93,6 @@ class PointNet2SemSegSSG(nn.Module):
             li_xyz, li_features = self.SA_modules[i](l_xyz[i], l_features[i])
             l_xyz.append(li_xyz)
             l_features.append(li_features)
-        print(len(l_xyz))
-        print(len(l_features))
-        print(l_features[0].size())
-        print(l_xyz[0].size())
         for i in range(-1, -(len(self.FP_modules) + 1), -1):
             l_features[i - 1] = self.FP_modules[i](
                 l_xyz[i - 1], l_xyz[i], l_features[i - 1], l_features[i]

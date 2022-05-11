@@ -88,7 +88,6 @@ class PointNet2SemSegSSG(nn.Module):
                 be formated as (x, y, z, features...)
         """
         xyz, features = self._break_up_pc(pointcloud)
-        print(xyz.size(),features.size())
         l_xyz, l_features = [xyz], [features]
         for i in range(len(self.SA_modules)):
             li_xyz, li_features = self.SA_modules[i](l_xyz[i], l_features[i])
@@ -103,7 +102,6 @@ class PointNet2SemSegSSG(nn.Module):
         classification = self.fc_lyaer(l_features[0])
 
       
-        print(l_features[0].size())
-        print(classification.size())
+
         return classification
         

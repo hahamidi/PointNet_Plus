@@ -24,6 +24,7 @@ import time
 from tqdm import tqdm, trange
 from data.Indoor3DSemSegLoader import fakeIndoor3DSemSeg,Indoor3DSemSeg
 from torch.utils.data import DataLoader
+from losses import Contrast_loss_point_cloud
 
 
 
@@ -120,7 +121,7 @@ class Trainer:
         progressbar = trange(self.epochs, desc='Progress')
         # writer = SummaryWriter("loss_lr_logs")
         if self.load_checkpoint == True:
-            self . load_from_checkpoint(torch.load(self.last_model))
+            self.load_from_checkpoint(torch.load(self.last_model))
 
 
         for i in progressbar:
@@ -261,7 +262,7 @@ def main(cfg):
 
     model = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
 
-    criterion = torch.nn.CrossEntropyLoss()
+    criterion = Contrast_loss_point_cloud()
 
 
     # optimizer
@@ -285,7 +286,7 @@ def main(cfg):
 
     training_losses, validation_losses, lr_rates = trainer.run_trainer()
     #test
-    
+
 
 
 

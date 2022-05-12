@@ -151,7 +151,7 @@ class Trainer:
             print("---------------------------------------------------------------------------------")
         
             
-            if 1:
+            if self.epoch % 5 == 0:
 
                 state = {'epoch': self.epoch,
                                 'state_dict': self.model.state_dict(),

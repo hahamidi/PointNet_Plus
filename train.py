@@ -27,9 +27,9 @@ from torch.utils.data import DataLoader
 from losses import Contrast_loss_point_cloud
 
 
-import torch
-from torch.utils.tensorboard import SummaryWriter
-writer = SummaryWriter()
+
+# from torch.utils.tensorboard import SummaryWriter
+# writer = SummaryWriter()
 
 # from pytorch_lightning.loggers import TensorBoardLogger
 # from surgeon_pytorch import Inspect,get_layers

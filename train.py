@@ -27,7 +27,6 @@ from torch.utils.data import DataLoader
 from losses import Contrast_loss_point_cloud
 
 
-
 import torch
 from torch.utils.tensorboard import SummaryWriter
 writer = SummaryWriter()
@@ -234,16 +233,16 @@ def main(cfg):
 
 
 
-    data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[5])
-    # data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
+    # data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[5])
+    # # data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
 
-    data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[6])
-
-
+    # data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[6])
 
 
-    # data_set_train = fakeIndoor3DSemSeg()
-    # data_set_eval  = fakeIndoor3DSemSeg()
+
+
+    data_set_train = fakeIndoor3DSemSeg()
+    data_set_eval  = fakeIndoor3DSemSeg()
 
 
 
@@ -264,7 +263,7 @@ def main(cfg):
 
     model = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
 
-    criterion = Contrast_loss_point_cloud()
+    criterion =  torch.nn.CrossEntropyLoss()
 
 
     # optimizer

@@ -39,7 +39,7 @@ class Contrast_loss_point_cloud(nn.Module):
                 loss = torch.mean(diviation)
                 # print(loss)
                 # print("------------------------------------------")
-                if torch.isinf(loss) == False:
+                if torch.isinf(loss) == False and torch.isnan(loss):
                     all_loss.append(loss)
                 else:
                     print("inf loss founded")

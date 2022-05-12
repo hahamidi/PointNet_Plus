@@ -44,6 +44,7 @@ class Contrast_loss_point_cloud(nn.Module):
                 else:
                     print("inf loss founded")
             all_loss = torch.stack(all_loss)
+            print(all_loss)
             return torch.mean(all_loss)
         
 if __name__ == '__main__':    

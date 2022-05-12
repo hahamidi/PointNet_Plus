@@ -23,12 +23,15 @@ class Contrast_loss_point_cloud(nn.Module):
                 mask = torch.eq(labels, labels.T).float()
                 mask_not = torch.logical_not(mask)
 
-
+                
                 posetives = (mask * dot_products).sum(1) / mask.sum(1)
                 negetives = (mask_not * dot_products).sum(1) 
-
+                print(posetives,negetives)
+                
 
                 diviation = posetives / (posetives + negetives)
+                print(diviation)
+                print("------------------------------------------")
                 diviation = - torch.log(diviation)
 
                 loss = torch.mean(diviation)

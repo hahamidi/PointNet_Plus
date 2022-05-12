@@ -14,8 +14,10 @@ class Contrast_loss_point_cloud(nn.Module):
 
                 labels = labels.unsqueeze(0)
 
-                normalize_vectors = F.normalize(features_map.T,dim = 1)       
+                normalize_vectors = F.normalize(features_map.T,dim = 1)
+                # norms  = torch.matmul(torch.norm(normalize_vectors, dim=1).unsqueeze(1) , torch.norm(normalize_vectors, dim=1).unsqueeze(1).T)       
                 dot_products = torch.matmul(normalize_vectors, normalize_vectors.T) 
+                # dot_products = torch.div(dot_products,norms)
                 dot_products = torch.exp(dot_products)
                 dot_products = torch.div(dot_products,self.temp)
                 dot_products = dot_products - torch.diag(torch.diagonal(dot_products, 0))
@@ -26,18 +28,20 @@ class Contrast_loss_point_cloud(nn.Module):
                 
                 posetives = (mask * dot_products).sum(1) / mask.sum(1)
                 negetives = (mask_not * dot_products).sum(1) / mask_not.sum(1)
-                print(posetives,negetives)
+                # print(posetives,negetives)
                 
 
                 diviation = posetives / (posetives + negetives)
-                print(diviation)
+                # print(diviation)
                 
                 diviation = - torch.log(diviation)
-                print(diviation)
+                # print(diviation)
                 loss = torch.mean(diviation)
                 print(loss)
                 print("------------------------------------------")
-                all_loss.append(loss)
+                if torch.isinf(loss) == False:
+                    print("inf loss founded")
+                    all_loss.append(loss)
             all_loss = torch.stack(all_loss)
             return torch.mean(all_loss)
         

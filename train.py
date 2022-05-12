@@ -263,7 +263,7 @@ def main(cfg):
 
     model = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
 
-    criterion =  torch.nn.CrossEntropyLoss()
+    criterion =  Contrast_loss_point_cloud()
 
 
     # optimizer

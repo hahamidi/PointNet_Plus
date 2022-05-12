@@ -63,10 +63,10 @@ class PointNet2SemSegSSG(nn.Module):
 
         self.fc_lyaer = nn.Sequential(
             nn.Conv1d(128, 128, kernel_size=1, bias=False),
-            nn.BatchNorm1d(128),
+            # nn.BatchNorm1d(128),
             nn.ReLU(True),
-            nn.Dropout(0.5),
-            nn.Conv1d(128, 13, kernel_size=1),
+            # nn.Dropout(0.5),
+            nn.Conv1d(128, 128, kernel_size=1),
         )
 
     def _break_up_pc(self, pc):

@@ -177,7 +177,7 @@ class Trainer:
             input, target = x.to(self.device), y.to(self.device)  # send to device (GPU or CPU)
             self.optimizer.zero_grad()  # zerograd the parameters
             out = self.model(input)  # one forward pass
-            print(out.size())
+            # print(out.size())
             loss = self.criterion(out, target)  # calculate loss
             
             loss_value = loss.item()

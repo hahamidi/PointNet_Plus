@@ -104,7 +104,7 @@ class Trainer:
         if checkpoint == "":
             checkpoint =  torch.load(self.last_model)
         self.model.load_state_dict(checkpoint["state_dict"])
-        self.optimizer.load_state_dict(checkpoint["optimizer"])
+        # self.optimizer = 
         
 
 

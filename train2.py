@@ -219,7 +219,7 @@ class Trainer:
         self.validation_loss.append(np.mean(valid_losses))
         # self.validation_acc.append(np.mean(valid_acc))
 
-        batch_iter.close()
+        # batch_iter.close()
 
 
 

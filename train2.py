@@ -194,7 +194,7 @@ class Trainer:
         self.training_loss.append(np.mean(train_losses))
         # self.training_acc.append(np.mean(train_acc))
         self.learning_rate.append(self.optimizer.param_groups[0]['lr'])
-        batch_iter.close()
+        # batch_iter.close()
 
     def _validate(self):
 
@@ -219,7 +219,7 @@ class Trainer:
         self.validation_loss.append(np.mean(valid_losses))
         # self.validation_acc.append(np.mean(valid_acc))
 
-        batch_iter.close()
+        # batch_iter.close()
 
 
 

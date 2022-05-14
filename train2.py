@@ -169,9 +169,9 @@ class Trainer:
         self.model.train()  # train mode
         train_losses = []  # accumulate the losses here
         train_acc = []
-        batch_iter = enumerate(self.training_DataLoader)
+        batch_iter = self.training_DataLoader
 
-        for i, (x, y) in batch_iter:
+        for (x, y) in batch_iter:
 
             input, target = x.to(self.device), y.to(self.device)  # send to device (GPU or CPU)
             self.optimizer.zero_grad()  # zerograd the parameters
@@ -202,9 +202,9 @@ class Trainer:
         self.model.eval()  # evaluation mode
         valid_losses = []  # accumulate the losses here
         valid_acc    = []
-        batch_iter = enumerate(self.validation_DataLoader)
+        batch_iter = self.validation_DataLoader
 
-        for i, (x, y) in batch_iter:
+        for (x, y) in batch_iter:
             input, target = x.to(self.device), y.to(self.device)  # send to device (GPU or CPU)
 
             with torch.no_grad():

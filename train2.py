@@ -259,8 +259,8 @@ def main(cfg):
          torch.device('cpu')
 
     
-    optimizer = torch.optim.Adam(model.parameters(), lr=hypers["optimizer.lr"]) #weight_decay= hypers["optimizer.lr_decay"]
     model = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=hypers["optimizer.lr"]) #weight_decay= hypers["optimizer.lr_decay"]
 
     criterion =  Contrast_loss_point_cloud()
 

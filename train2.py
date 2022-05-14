@@ -229,7 +229,7 @@ def main(cfg):
     print(cfg)
     # print(model)
 
-
+    print("=====>",hypers["optimizer.lr"])
 
     data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[5,6])
     # data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
@@ -258,7 +258,7 @@ def main(cfg):
     else:
          torch.device('cpu')
 
-    print("=====>",hypers["optimizer.lr"])
+    
     optimizer = torch.optim.Adam(model.parameters(), lr=hypers["optimizer.lr"]) #weight_decay= hypers["optimizer.lr_decay"]
     model = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
 

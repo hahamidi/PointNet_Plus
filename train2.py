@@ -84,12 +84,12 @@ class Trainer:
         self.load_checkpoint = load_checkpoint
         
     
-        self.training_loss = []
-        self.validation_loss = []
-        self.learning_rate = []
+        self.training_loss = [0]
+        self.validation_loss = [0]
+        self.learning_rate = [0]
         self.last_model = ""
-        self.validation_acc = []
-        self.training_acc = []
+        self.validation_acc = [0]
+        self.training_acc = [0]
 
     def save_checkpoint(self,state,filename = "chechpoint.pth.tar"):
         print("**************saving model****************")
@@ -189,7 +189,7 @@ class Trainer:
             # train_acc.append(acc.item())
 
 
-            # batch_iter.set_description(f'Training: (loss {loss_value:.4f})')  # update progressbar
+            # print(f'Training: (loss {loss_value:.4f})') 
 
         self.training_loss.append(np.mean(train_losses))
         # self.training_acc.append(np.mean(train_acc))
@@ -214,7 +214,7 @@ class Trainer:
                 acc = (torch.argmax(out, dim=1) == target).float().mean()
                 valid_losses.append(loss_value)
                 # valid_acc.append(acc.item())
-                batch_iter.set_description(f'Validation: (loss {loss_value:.4f})')
+                # print(f'Validation: (loss {loss_value:.4f})')
 
         self.validation_loss.append(np.mean(valid_losses))
         # self.validation_acc.append(np.mean(valid_acc))

@@ -67,7 +67,7 @@ class Trainer:
                  epoch: int = 0,
                  notebook: bool = False,
                  save_best_model : int = 1,
-                 load_checkpoint : bool = False
+                 load_checkpoint : bool = True
                  ):
 
         self.model = model
@@ -87,7 +87,7 @@ class Trainer:
         self.training_loss = [0]
         self.validation_loss = [0]
         self.learning_rate = [0]
-        self.last_model = ""
+        self.last_model = "/checkpoints/27_001.pth.tar.tar"
         self.validation_acc = [0]
         self.training_acc = [0]
 

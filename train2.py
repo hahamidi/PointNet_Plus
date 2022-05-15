@@ -198,6 +198,7 @@ class Trainer:
             # with torch.no_grad():
             #     acc = (torch.argmax(out, dim=1) == target).float().mean()
             # train_acc.append(acc.item())
+            break
 
 
             # print(f'Training: (loss {loss_value:.4f})') 

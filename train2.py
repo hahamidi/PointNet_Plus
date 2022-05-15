@@ -25,7 +25,8 @@ from tqdm import tqdm, trange
 from data.Indoor3DSemSegLoader import fakeIndoor3DSemSeg,Indoor3DSemSeg
 from torch.utils.data import DataLoader
 from losses import Contrast_loss_point_cloud
-
+from openTSNE import TSNE
+import matplotlib.pyplot as plt
 
 
 # from torch.utils.tensorboard import SummaryWriter
@@ -52,6 +53,15 @@ def hydra_params_to_dotdict(hparams):
         return res
 
     return _to_dot_dict(hparams)
+
+
+
+def show_embeddings(tsne_embs_i, lbls, highlight_lbls=None, imsize=8, cmap=plt.cm.tab20):
+    tsne = TSNE(metric='cosine', n_jobs=-1)
+    tsne_embs = tsne.fit(tsne_embs_i)
+    _,ax = plt.subplots(figsize=(imsize,imsize))
+    colors = cmap(np.array(lbls))
+    ax.scatter(tsne_embs[:,0], tsne_embs[:,1], c=colors, cmap=cmap, alpha=1 if highlight_lbls is None else 0.1)
 
 
 class Trainer:
@@ -173,6 +183,7 @@ class Trainer:
 
         for (x, y) in batch_iter:
 
+
             input, target = x.to(self.device), y.to(self.device)  # send to device (GPU or CPU)
             self.optimizer.zero_grad()  # zerograd the parameters
             out = self.model(input)  # one forward pass
@@ -190,7 +201,11 @@ class Trainer:
 
 
             # print(f'Training: (loss {loss_value:.4f})') 
-
+        print(out[0].size())
+        print(target[0].size())
+        print(out[0])
+        print(target[0])
+        # show_embeddings(out[0].cpu().detach().numpy())
         self.training_loss.append(np.mean(train_losses))
         # self.training_acc.append(np.mean(train_acc))
         self.learning_rate.append(self.optimizer.param_groups[0]['lr'])

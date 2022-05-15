@@ -206,6 +206,8 @@ class Trainer:
         # print(target[0].size())
         # print(out[0])
         # print(target[0])
+        print((out[0].T).cpu().detach().numpy())
+        print(target[0].cpu().detach().numpy())
         show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy())
         self.training_loss.append(np.mean(train_losses))
         # self.training_acc.append(np.mean(train_acc))

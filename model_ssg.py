@@ -62,8 +62,8 @@ class PointNet2SemSegSSG(nn.Module):
         self.FP_modules.append(PointnetFPModule(mlp=[512 + 256, 256, 256]))
 
         self.fc_lyaer = nn.Sequential(
-             nn.Flatten(),
-             nn.Linear(256, 128)
+            torch.nn.Conv1d(128, 128, 1, stride=1, padding=0)
+
              )
 
     def _break_up_pc(self, pc):

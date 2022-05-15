@@ -67,7 +67,7 @@ class Trainer:
                  epoch: int = 0,
                  notebook: bool = False,
                  save_best_model : int = 1,
-                 load_checkpoint : bool = True
+                 load_checkpoint : bool = False
                  ):
 
         self.model = model

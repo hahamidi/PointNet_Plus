@@ -286,7 +286,7 @@ def main(cfg):
 
 
     model_bkb = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
-    checkpoint =  torch.load("/checkpoints/78epoch.tar")
+    checkpoint =  torch.load(pointnet2_dir+"/checkpoints/78epoch.tar")
     model_bkb.load_state_dict(checkpoint["state_dict"])
     model_back_bone_plus_head = model_with_head(model_bkb)
 

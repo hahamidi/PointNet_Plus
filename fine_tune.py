@@ -27,7 +27,7 @@ from torch.utils.data import DataLoader
 from losses import Contrast_loss_point_cloud
 from openTSNE import TSNE
 import matplotlib.pyplot as plt
-from model_ssg import PointNet2SemSegSSG_with_head
+from model_ssg import model_with_head
 
 # from torch.utils.tensorboard import SummaryWriter
 # writer = SummaryWriter()
@@ -285,9 +285,10 @@ def main(cfg):
 
 
 
-    model_back_bone_plus_head = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
+    model_bkb = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
     checkpoint =  torch.load("/checkpoints/78epoch.tar")
-    model_back_bone_plus_head.load_state_dict(checkpoint["state_dict"])
+    model_bkb.load_state_dict(checkpoint["state_dict"])
+    model_back_bone_plus_head = model_with_head(model_bkb)
 
     optimizer = torch.optim.Adam(model_back_bone_plus_head.parameters(), lr=hypers["optimizer.lr"]) #weight_decay= hypers["optimizer.lr_decay"]
 

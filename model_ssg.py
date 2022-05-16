@@ -1,4 +1,5 @@
 
+from turtle import forward
 import torch
 import torch.nn as nn
 from pointnet2_ops_lib.pointnet2_ops.pointnet2_modules import PointnetFPModule, PointnetSAModule
@@ -100,4 +101,25 @@ class PointNet2SemSegSSG(nn.Module):
       
 
         return classification
-        
+
+
+
+
+class model_with_head(torch.nn.Module):
+    def __init__(self,model_bkb):
+        self.Back_bone_model = model_bkb
+
+
+        self.fc_head = nn.Sequential(
+
+            nn.BatchNorm1d(128),
+            nn.ReLU(True),
+            nn.Dropout(0.5),
+            nn.Conv1d(128, 13, kernel_size=1),
+        )
+
+    def forward(self,pointcloud):
+        bcb_out = self.Back_bone_model(pointcloud)
+        out = self.fc_head(bcb_out)
+        return out
+

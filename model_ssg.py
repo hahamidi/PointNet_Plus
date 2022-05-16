@@ -107,6 +107,7 @@ class PointNet2SemSegSSG(nn.Module):
 
 class model_with_head(torch.nn.Module):
     def __init__(self,model_bkb):
+        super().__init__()
         self.Back_bone_model = model_bkb
 
 

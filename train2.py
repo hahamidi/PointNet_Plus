@@ -210,7 +210,7 @@ class Trainer:
         # print(target[0])
         # print(type((out[0].T).cpu().detach().numpy()))
         # print(target[0].cpu().detach().numpy())
-        show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "train"+str(self.epoch)+"/"+str(np.mean(train_losses)))
+        show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "train"+str(self.epoch)+"*"+str(np.mean(train_losses)))
         self.training_loss.append(np.mean(train_losses))
         # self.training_acc.append(np.mean(train_acc))
         self.learning_rate.append(self.optimizer.param_groups[0]['lr'])
@@ -235,7 +235,7 @@ class Trainer:
                 valid_losses.append(loss_value)
                 # valid_acc.append(acc.item())
                 # print(f'Validation: (loss {loss_value:.4f})')
-        show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "val"+str(self.epoch)+"/"+str(np.mean(valid_losses)))
+        show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "val"+str(self.epoch)+"*"+str(np.mean(valid_losses)))
         self.validation_loss.append(np.mean(valid_losses))
         # self.validation_acc.append(np.mean(valid_acc))
 

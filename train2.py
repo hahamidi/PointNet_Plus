@@ -249,7 +249,7 @@ def main(cfg):
 
     print("=====>",hypers["optimizer.lr"])
 
-    data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[5,6])
+    data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[2,3,4,5,6])
     # data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
 
     data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[6])

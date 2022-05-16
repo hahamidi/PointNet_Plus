@@ -201,9 +201,9 @@ class Trainer:
             train_losses.append(loss_value)
             loss.backward()  # one backward pass
             self.optimizer.step()  # update the parameters
-            # with torch.no_grad():
-            #     acc = (torch.argmax(out, dim=1) == target).float().mean()
-            # train_acc.append(acc.item())
+            with torch.no_grad():
+                acc = (torch.argmax(out, dim=1) == target).float().mean()
+            train_acc.append(acc.item())
 
 
 
@@ -216,7 +216,7 @@ class Trainer:
         # print(target[0].cpu().detach().numpy())
         show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "train"+str(self.epoch)+"*"+str(np.mean(train_losses)))
         self.training_loss.append(np.mean(train_losses))
-        # self.training_acc.append(np.mean(train_acc))
+        self.training_acc.append(np.mean(train_acc))
         self.learning_rate.append(self.optimizer.param_groups[0]['lr'])
         # batch_iter.close()
 
@@ -237,11 +237,11 @@ class Trainer:
                 loss_value = loss.item()
                 acc = (torch.argmax(out, dim=1) == target).float().mean()
                 valid_losses.append(loss_value)
-                # valid_acc.append(acc.item())
+                valid_acc.append(acc.item())
                 # print(f'Validation: (loss {loss_value:.4f})')
         show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "val"+str(self.epoch)+"*"+str(np.mean(valid_losses)))
         self.validation_loss.append(np.mean(valid_losses))
-        # self.validation_acc.append(np.mean(valid_acc))
+        self.validation_acc.append(np.mean(valid_acc))
 
         # batch_iter.close()
 

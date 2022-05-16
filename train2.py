@@ -62,6 +62,7 @@ def show_embeddings(tsne_embs_i, lbls, highlight_lbls=None, imsize=8, cmap=plt.c
     _,ax = plt.subplots(figsize=(imsize,imsize))
     colors = cmap(np.array(lbls))
     ax.scatter(tsne_embs[:,0], tsne_embs[:,1], c=colors, cmap=cmap, alpha=1 if highlight_lbls is None else 0.1)
+    print(ax)
 
 
 class Trainer:

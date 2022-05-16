@@ -56,14 +56,14 @@ def hydra_params_to_dotdict(hparams):
 
 
 
-def show_embeddings(tsne_embs_i, lbls, highlight_lbls=None, imsize=8, cmap=plt.cm.tab20):
+def show_embeddings(tsne_embs_i, lbls,title = "",highlight_lbls=None, imsize=8, cmap=plt.cm.tab20):
     tsne = TSNE(metric='cosine', n_jobs=-1)
     tsne_embs = tsne.fit(tsne_embs_i)
     fig,ax = plt.subplots(figsize=(imsize,imsize))
     colors = cmap(np.array(lbls))
     ax.scatter(tsne_embs[:,0], tsne_embs[:,1], c=colors, cmap=cmap, alpha=1 if highlight_lbls is None else 0.1)
-    fig.savefig('to.png') 
-    print(ax)
+    fig.savefig(title+'.png') 
+    # print(ax)
 
 
 class Trainer:
@@ -200,7 +200,7 @@ class Trainer:
             # with torch.no_grad():
             #     acc = (torch.argmax(out, dim=1) == target).float().mean()
             # train_acc.append(acc.item())
-            break
+
 
 
             # print(f'Training: (loss {loss_value:.4f})') 
@@ -208,9 +208,9 @@ class Trainer:
         # print(target[0].size())
         # print(out[0])
         # print(target[0])
-        print(type((out[0].T).cpu().detach().numpy()))
-        print(target[0].cpu().detach().numpy())
-        show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy())
+        # print(type((out[0].T).cpu().detach().numpy()))
+        # print(target[0].cpu().detach().numpy())
+        show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "train"+str(self.epoch)+"/"+str(np.mean(train_losses)))
         self.training_loss.append(np.mean(train_losses))
         # self.training_acc.append(np.mean(train_acc))
         self.learning_rate.append(self.optimizer.param_groups[0]['lr'])
@@ -235,7 +235,7 @@ class Trainer:
                 valid_losses.append(loss_value)
                 # valid_acc.append(acc.item())
                 # print(f'Validation: (loss {loss_value:.4f})')
-
+        show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "val"+str(self.epoch)+"/"+str(np.mean(valid_losses)))
         self.validation_loss.append(np.mean(valid_losses))
         # self.validation_acc.append(np.mean(valid_acc))
 

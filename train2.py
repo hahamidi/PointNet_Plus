@@ -182,13 +182,17 @@ class Trainer:
         train_losses = []  # accumulate the losses here
         train_acc = []
         batch_iter = self.training_DataLoader
-
+        indx_print = 0 
         for (x, y) in batch_iter:
-
+            indx_print += 1
 
             input, target = x.to(self.device), y.to(self.device)  # send to device (GPU or CPU)
             self.optimizer.zero_grad()  # zerograd the parameters
+
+
             out = self.model(input)  # one forward pass
+            if indx_print == 1 and self.epoch == 1 :
+                show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "train_fisrt"+str(self.epoch)+"*")
             # print(out.size())
             loss = self.criterion(out, target)  # calculate loss
             

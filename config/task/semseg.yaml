@@ -1,6 +1,6 @@
 optimizer:
     weight_decay: 0.0
-    lr: (1e-3)*3 
+    lr: 1e-3
     lr_decay: 0.5
     bn_momentum: 0.5
     bnm_decay: 0.5

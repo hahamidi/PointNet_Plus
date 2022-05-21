@@ -88,7 +88,7 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             t6 = time()
             features = features.T[mask_data,:]
             ###############
-            print("labels",torch.bincount(labels))
+            # print("labels",torch.bincount(labels))
             t7 = time()
             labels = labels.unsqueeze(0)
             normalize_vectors = F.normalize(features,p = 2,dim = 1)
@@ -118,7 +118,7 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             #     # print(diviation)
             loss = torch.mean(diviation)
             t8 = time()
-            print("time",t2 - t1 , t3 - t2,t4 - t3,t5 - t4,t6 - t5,t7 - t6,t8 - t7)
+            # print("time",t2 - t1 , t3 - t2,t4 - t3,t5 - t4,t6 - t5,t7 - t6,t8 - t7)
             #     # print(loss)
             #     # print("------------------------------------------")
             if torch.isinf(loss) == False and torch.isnan(loss) == False:

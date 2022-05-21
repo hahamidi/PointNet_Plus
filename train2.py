@@ -182,6 +182,7 @@ class Trainer:
         train_losses = []  # accumulate the losses here
         train_acc = []
         batch_iter = self.training_DataLoader
+        print("tran_size ",len(self.training_DataLoader))
         indx_print = 0 
         for (x, y) in batch_iter:
             indx_print += 1
@@ -197,7 +198,7 @@ class Trainer:
             loss = self.criterion(out, target)  # calculate loss
             
             loss_value = loss.item()
-            # print(loss_value)
+            print("loss=>",loss_value)
             train_losses.append(loss_value)
             loss.backward()  # one backward pass
             self.optimizer.step()  # update the parameters
@@ -237,6 +238,7 @@ class Trainer:
                 loss_value = loss.item()
                 acc = (torch.argmax(out, dim=1) == target).float().mean()
                 valid_losses.append(loss_value)
+                print("loss=>",loss_value)
                 # valid_acc.append(acc.item())
                 # print(f'Validation: (loss {loss_value:.4f})')
         show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "val"+str(self.epoch)+"*"+str(np.mean(valid_losses)))
@@ -255,7 +257,7 @@ def main(cfg):
 
     print("=====>",hypers["optimizer.lr"])
 
-    data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[5,6])
+    data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[2,3,4,5,6])
     # data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
 
     data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[6])

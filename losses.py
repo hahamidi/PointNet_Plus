@@ -11,7 +11,7 @@ class Contrast_loss_point_cloud(nn.Module):
         def forward(self, features, labels_all=None):
             all_loss = []
             for features_map,labels in zip(features,labels_all):
-                print("labels",torch.bincount(labels))
+
 
                 labels = labels.unsqueeze(0)
 
@@ -61,10 +61,10 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             # for features_map,labels in zip(features,labels_all):
             features_shape = features_in.shape
             features= features_in.view(features_shape[1],features_shape[0]*features_shape[2])
-
+            
             ############
             labels = labels_in.flatten()
- 
+            print("labels",torch.bincount(labels))
             dist = 390 / (torch.bincount(labels) +1)
             for i in range(dist.shape[0]):
                 if dist[i] > 1:
@@ -115,7 +115,8 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             else:
                     print("inf or nan loss founded")
                     loss = 0
-                    return torch.mean(loss) 
+                    return torch.torch(0)
+
 
 
 

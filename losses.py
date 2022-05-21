@@ -52,7 +52,7 @@ class Contrast_loss_point_cloud(nn.Module):
 
 class Contrast_loss_point_cloud_inetra_batch(nn.Module):
         def __init__(self, temperature=0.07):
-            super(Contrast_loss_point_cloud, self).__init__()
+            super(Contrast_loss_point_cloud_inetra_batch, self).__init__()
             self.temp = temperature
             self.device = (torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'))
 

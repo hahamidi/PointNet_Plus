@@ -68,13 +68,17 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             labels = labels_in.flatten()
             t3 = time()
             dist = 500 / (torch.bincount(labels) +1)
+            stats = torch.empty(labels.shape)
+            stats = labels
             for i in range(dist.shape[0]):
                 if dist[i] > 1:
                   dist[i] = 1
+                stats[stats == i] = dist[i]
+                
             stats = torch.empty(labels.shape)
             t4 = time()
-            for i in range(labels.shape[0]):
-                stats[i] = dist[labels[i]]
+            # for i in range(labels.shape[0]):
+            #     stats[i] = dist[labels[i]]
             t5 = time()
             mask_label = torch.bernoulli(stats).to(self.device)
             mask_select = mask_label > 0 

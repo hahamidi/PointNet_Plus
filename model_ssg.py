@@ -1,4 +1,5 @@
 
+from turtle import forward
 import torch
 import torch.nn as nn
 from pointnet2_ops_lib.pointnet2_ops.pointnet2_modules import PointnetFPModule, PointnetSAModule
@@ -62,7 +63,9 @@ class PointNet2SemSegSSG(nn.Module):
         self.FP_modules.append(PointnetFPModule(mlp=[512 + 256, 256, 256]))
 
         self.fc_lyaer = nn.Sequential(
+            nn.Dropout(0.5),
             torch.nn.Conv1d(128, 128, 1, stride=1, padding=0)
+            
 
              )
 
@@ -100,4 +103,24 @@ class PointNet2SemSegSSG(nn.Module):
       
 
         return classification
-        
+
+
+
+class PointNet2SemSegSSG_with_head(nn.Module):
+        def __init__(self, model_back_bone):
+            self.model_bkb = model_back_bone
+            self.fc_lyaer_head = nn.Sequential(
+                nn.BatchNorm1d(128),
+                nn.ReLU(True),
+                nn.Dropout(0.5),
+                nn.Conv1d(128, 13, kernel_size=1)
+
+             )
+        def forward(self,pointcloud):
+            features =  self.model_bkb(pointcloud)
+            out = self.fc_lyaer_head(features)
+            return out
+
+
+
+

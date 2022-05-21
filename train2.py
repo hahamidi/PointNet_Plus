@@ -270,11 +270,11 @@ def main(cfg):
 
 
 
-    data_loader_train =  DataLoader(data_set_train, batch_size=24, shuffle=False, sampler=None,
+    data_loader_train =  DataLoader(data_set_train, batch_size=100, shuffle=False, sampler=None,
            batch_sampler=None, num_workers=2)
     # data_loader_test  = DataLoader(data_set_test, batch_size=24, shuffle=False, sampler=None,
     #        batch_sampler=None, num_workers=2)
-    data_loader_eval  = DataLoader(data_set_eval, batch_size=24, shuffle=False, sampler=None,
+    data_loader_eval  = DataLoader(data_set_eval, batch_size=100, shuffle=False, sampler=None,
            batch_sampler=None, num_workers=2)
 
    

@@ -70,13 +70,13 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             dist = 500 / (torch.bincount(labels) +1)
             stats = torch.empty(labels.shape)
             stats = labels
+            stats = stats.double()
             for i in range(dist.shape[0]):
                 if dist[i] > 1:
                   dist[i] = 1
-                print(type(dist[i]))
-                stats[stats == i] = dist[i]
-                
-            stats = torch.empty(labels.shape)
+                stats[stats == i] = dist[i].item()
+    
+
             t4 = time()
             # for i in range(labels.shape[0]):
             #     stats[i] = dist[labels[i]]
@@ -128,6 +128,7 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
                     print("inf or nan loss founded")
                     loss = 0
                     return torch.torch(0)
+
 
 
 

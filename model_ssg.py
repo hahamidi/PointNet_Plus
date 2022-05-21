@@ -106,25 +106,6 @@ class PointNet2SemSegSSG(nn.Module):
 
 
 
-<<<<<<< HEAD
-class PointNet2SemSegSSG_with_head(nn.Module):
-        def __init__(self, model_back_bone):
-            self.model_bkb = model_back_bone
-            self.fc_lyaer_head = nn.Sequential(
-                nn.BatchNorm1d(128),
-                nn.ReLU(True),
-                nn.Dropout(0.5),
-                nn.Conv1d(128, 13, kernel_size=1)
-
-             )
-        def forward(self,pointcloud):
-            features =  self.model_bkb(pointcloud)
-            out = self.fc_lyaer_head(features)
-            return out
-
-
-
-=======
 
 class model_with_head(torch.nn.Module):
     def __init__(self,model_bkb):
@@ -144,5 +125,4 @@ class model_with_head(torch.nn.Module):
         bcb_out = self.Back_bone_model(pointcloud)
         out = self.fc_head(bcb_out)
         return out
->>>>>>> 2a2b04efbad38d8a67e202df788dd92e1a07ee10
 

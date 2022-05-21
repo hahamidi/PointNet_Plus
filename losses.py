@@ -73,6 +73,7 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             for i in range(dist.shape[0]):
                 if dist[i] > 1:
                   dist[i] = 1
+                print(type(dist[i]))
                 stats[stats == i] = dist[i]
                 
             stats = torch.empty(labels.shape)

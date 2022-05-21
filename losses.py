@@ -11,6 +11,7 @@ class Contrast_loss_point_cloud(nn.Module):
         def forward(self, features, labels_all=None):
             all_loss = []
             for features_map,labels in zip(features,labels_all):
+                print("labels",torch.bincount(labels))
 
                 labels = labels.unsqueeze(0)
 

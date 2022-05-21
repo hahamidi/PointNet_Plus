@@ -63,7 +63,7 @@ class PointNet2SemSegSSG(nn.Module):
         self.FP_modules.append(PointnetFPModule(mlp=[512 + 256, 256, 256]))
 
         self.fc_lyaer = nn.Sequential(
-            nn.Dropout(0.5),
+            # nn.Dropout(0.5),
             torch.nn.Conv1d(128, 128, 1, stride=1, padding=0)
             
 

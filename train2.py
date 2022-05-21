@@ -24,7 +24,7 @@ import time
 from tqdm import tqdm, trange
 from data.Indoor3DSemSegLoader import fakeIndoor3DSemSeg,Indoor3DSemSeg
 from torch.utils.data import DataLoader
-from losses import Contrast_loss_point_cloud
+from losses import Contrast_loss_point_cloud,Contrast_loss_point_cloud_inetra_batch
 from openTSNE import TSNE
 import matplotlib.pyplot as plt
 
@@ -286,7 +286,7 @@ def main(cfg):
     model = hydra.utils.instantiate(cfg.task_model,hypers).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=hypers["optimizer.lr"]) #weight_decay= hypers["optimizer.lr_decay"]
 
-    criterion =  Contrast_loss_point_cloud()
+    criterion =  Contrast_loss_point_cloud_inetra_batch()
 
 
     # optimizer

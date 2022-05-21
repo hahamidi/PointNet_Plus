@@ -63,27 +63,28 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             # for features_map,labels in zip(features,labels_all):
             features_shape = features_in.shape
             features= features_in.view(features_shape[1],features_shape[0]*features_shape[2])
-            
+            t2 = time()
             ############
             labels = labels_in.flatten()
-            
+            t3 = time()
             dist = 500 / (torch.bincount(labels) +1)
             for i in range(dist.shape[0]):
                 if dist[i] > 1:
                   dist[i] = 1
             stats = torch.empty(labels.shape)
-
+            t4 = time()
             for i in range(labels.shape[0]):
                 stats[i] = dist[labels[i]]
+            t5 = time()
             mask_label = torch.bernoulli(stats).to(self.device)
             mask_select = mask_label > 0 
             labels = torch.masked_select(labels, mask_select)
             mask_data = torch.nonzero(mask_select).flatten()
-
+            t6 = time()
             features = features.T[mask_data,:]
             ###############
             print("labels",torch.bincount(labels))
-            t2 = time()
+            t7 = time()
             labels = labels.unsqueeze(0)
             normalize_vectors = F.normalize(features,p = 2,dim = 1)
             norms  = torch.matmul(torch.norm(normalize_vectors, dim=1).unsqueeze(1) , torch.norm(normalize_vectors, dim=1).unsqueeze(1).T)       
@@ -111,8 +112,8 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             diviation = - torch.log(diviation)
             #     # print(diviation)
             loss = torch.mean(diviation)
-            t3 = time()
-            print("time",t2 - t1 , t3 - t2)
+            t8 = time()
+            print("time",t2 - t1 , t3 - t2,t4 - t3,t5 - t4,t6 - t5,t7 - t6,t8 - t7)
             #     # print(loss)
             #     # print("------------------------------------------")
             if torch.isinf(loss) == False and torch.isnan(loss) == False:

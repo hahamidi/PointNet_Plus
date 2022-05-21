@@ -52,7 +52,7 @@ class Contrast_loss_point_cloud(nn.Module):
 
 
 class Contrast_loss_point_cloud_inetra_batch(nn.Module):
-        def __init__(self, temperature=0.07):
+        def __init__(self, temperature=0.5):
             super(Contrast_loss_point_cloud_inetra_batch, self).__init__()
             self.temp = temperature
             self.device = (torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'))
@@ -65,7 +65,7 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             
             ############
             labels = labels_in.flatten()
-            print("labels",torch.bincount(labels))
+            
             dist = 1500 / (torch.bincount(labels) +1)
             for i in range(dist.shape[0]):
                 if dist[i] > 1:
@@ -81,14 +81,16 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
 
             features = features.T[mask_data,:]
             ###############
-
+            print("labels",torch.bincount(labels))
             labels = labels.unsqueeze(0)
             normalize_vectors = F.normalize(features,p = 2,dim = 1)
             norms  = torch.matmul(torch.norm(normalize_vectors, dim=1).unsqueeze(1) , torch.norm(normalize_vectors, dim=1).unsqueeze(1).T)       
             dot_products = torch.matmul(normalize_vectors, normalize_vectors.T) 
             dot_products = torch.div(dot_products,norms)
-            dot_products = torch.exp(dot_products)
+
             dot_products = torch.div(dot_products,self.temp)
+            dot_products = torch.exp(dot_products)
+            
             dot_products = dot_products - torch.diag(torch.diagonal(dot_products, 0))
 
             mask = torch.eq(labels, labels.T).float()

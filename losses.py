@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class Contrast_loss_point_cloud(nn.Module):
-        def __init__(self, temperature=0.07):
+        def __init__(self, temperature=0.1):
             super(Contrast_loss_point_cloud, self).__init__()
             self.temp = temperature
             self.device = (torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'))
@@ -19,8 +19,9 @@ class Contrast_loss_point_cloud(nn.Module):
                 # norms  = torch.matmul(torch.norm(normalize_vectors, dim=1).unsqueeze(1) , torch.norm(normalize_vectors, dim=1).unsqueeze(1).T)       
                 dot_products = torch.matmul(normalize_vectors, normalize_vectors.T) 
                 # dot_products = torch.div(dot_products,norms)
-                dot_products = torch.exp(dot_products)
                 dot_products = torch.div(dot_products,self.temp)
+                dot_products = torch.exp(dot_products)
+                
                 dot_products = dot_products - torch.diag(torch.diagonal(dot_products, 0))
                 
                 mask = torch.eq(labels, labels.T).float()

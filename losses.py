@@ -111,10 +111,11 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             #     # print("------------------------------------------")
             if torch.isinf(loss) == False and torch.isnan(loss) == False:
 
-                    return loss
+                    return torch.mean(loss)
             else:
                     print("inf or nan loss founded")
-                    return 0 
+                    loss = 0
+                    return torch.mean(loss) 
 
 
 

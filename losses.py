@@ -66,8 +66,11 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             t2 = time()
             ############
             labels = labels_in.flatten()
-            print("labels",torch.bincount(labels))
-            dist = 500 / (torch.bincount(labels) +1)
+            t3 = time()
+            dist = 750 / (torch.bincount(labels) +1)
+            stats = torch.empty(labels.shape)
+            stats = labels
+            stats = stats.double()
             for i in range(dist.shape[0]):
                 if dist[i] > 1:
                   dist[i] = 1

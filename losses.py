@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+from time import time
 class Contrast_loss_point_cloud(nn.Module):
-        def __init__(self, temperature=0.07):
+        def __init__(self, temperature=0.1):
             super(Contrast_loss_point_cloud, self).__init__()
             self.temp = temperature
             self.device = (torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'))
@@ -19,8 +19,9 @@ class Contrast_loss_point_cloud(nn.Module):
                 # norms  = torch.matmul(torch.norm(normalize_vectors, dim=1).unsqueeze(1) , torch.norm(normalize_vectors, dim=1).unsqueeze(1).T)       
                 dot_products = torch.matmul(normalize_vectors, normalize_vectors.T) 
                 # dot_products = torch.div(dot_products,norms)
-                dot_products = torch.exp(dot_products)
                 dot_products = torch.div(dot_products,self.temp)
+                dot_products = torch.exp(dot_products)
+                
                 dot_products = dot_products - torch.diag(torch.diagonal(dot_products, 0))
                 
                 mask = torch.eq(labels, labels.T).float()
@@ -51,17 +52,18 @@ class Contrast_loss_point_cloud(nn.Module):
 
 
 class Contrast_loss_point_cloud_inetra_batch(nn.Module):
-        def __init__(self, temperature=0.07):
+        def __init__(self, temperature=0.5):
             super(Contrast_loss_point_cloud_inetra_batch, self).__init__()
             self.temp = temperature
             self.device = (torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'))
 
         def forward(self, features_in, labels_in=None):
+            t1 = time()
             # all_loss = []
             # for features_map,labels in zip(features,labels_all):
             features_shape = features_in.shape
             features= features_in.view(features_shape[1],features_shape[0]*features_shape[2])
-            
+            t2 = time()
             ############
             labels = labels_in.flatten()
             print("labels",torch.bincount(labels))
@@ -69,25 +71,31 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             for i in range(dist.shape[0]):
                 if dist[i] > 1:
                   dist[i] = 1
-            stats = torch.empty(labels.shape)
+                stats[stats == i] = dist[i].item()
+    
 
-            for i in range(labels.shape[0]):
-                stats[i] = dist[labels[i]]
+            t4 = time()
+            # for i in range(labels.shape[0]):
+            #     stats[i] = dist[labels[i]]
+            t5 = time()
             mask_label = torch.bernoulli(stats).to(self.device)
             mask_select = mask_label > 0 
             labels = torch.masked_select(labels, mask_select)
             mask_data = torch.nonzero(mask_select).flatten()
-
+            t6 = time()
             features = features.T[mask_data,:]
             ###############
-
+            # print("labels",torch.bincount(labels))
+            t7 = time()
             labels = labels.unsqueeze(0)
             normalize_vectors = F.normalize(features,p = 2,dim = 1)
             norms  = torch.matmul(torch.norm(normalize_vectors, dim=1).unsqueeze(1) , torch.norm(normalize_vectors, dim=1).unsqueeze(1).T)       
             dot_products = torch.matmul(normalize_vectors, normalize_vectors.T) 
             dot_products = torch.div(dot_products,norms)
-            dot_products = torch.exp(dot_products)
+
             dot_products = torch.div(dot_products,self.temp)
+            dot_products = torch.exp(dot_products)
+            
             dot_products = dot_products - torch.diag(torch.diagonal(dot_products, 0))
 
             mask = torch.eq(labels, labels.T).float()
@@ -106,7 +114,8 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
             diviation = - torch.log(diviation)
             #     # print(diviation)
             loss = torch.mean(diviation)
-
+            t8 = time()
+            # print("time",t2 - t1 , t3 - t2,t4 - t3,t5 - t4,t6 - t5,t7 - t6,t8 - t7)
             #     # print(loss)
             #     # print("------------------------------------------")
             if torch.isinf(loss) == False and torch.isnan(loss) == False:
@@ -116,6 +125,7 @@ class Contrast_loss_point_cloud_inetra_batch(nn.Module):
                     print("inf or nan loss founded")
                     loss = 0
                     return torch.torch(0)
+
 
 
 

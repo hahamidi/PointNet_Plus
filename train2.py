@@ -57,13 +57,31 @@ def hydra_params_to_dotdict(hparams):
 
 
 def show_embeddings(tsne_embs_i, lbls,title = "",highlight_lbls=None, imsize=8, cmap=plt.cm.tab20):
+
+
+    labels = lbls.flatten()
+    feat = np.zeros((tsne_embs_i.shape[1],tsne_embs_i.shape[2])).T
+    
+    for b in tsne_embs_i:
+      feat= np.concatenate((feat, b.T), axis=0)
+
+    feat= feat[tsne_embs_i.shape[2]: , :]
+    number_of_labels = np.amax(labels) + 1
+    selected = np.zeros((tsne_embs_i.shape[1],1)).T
+    labels_s = []
+    for i in range(number_of_labels):
+      selected= np.concatenate((selected,feat[labels == i][0:100]), axis=0)
+      labels_s= np.concatenate((labels_s,labels[labels == i][0:100]), axis=0)
+    selected = selected[1:]
+
     tsne = TSNE(metric='cosine', n_jobs=-1)
-    tsne_embs = tsne.fit(tsne_embs_i)
+    tsne_embs = tsne.fit(selected)
+
     fig,ax = plt.subplots(figsize=(imsize,imsize))
-    colors = cmap(np.array(lbls))
+
+    colors = cmap(np.array(labels_s))
     ax.scatter(tsne_embs[:,0], tsne_embs[:,1], c=colors, cmap=cmap, alpha=1 if highlight_lbls is None else 0.1)
     fig.savefig(title+'.png') 
-    # print(ax)
 
 
 class Trainer:
@@ -192,8 +210,9 @@ class Trainer:
 
 
             out = self.model(input)  # one forward pass
-            if indx_print == 1 and self.epoch == 1 :
-                show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "train_fisrt"+str(self.epoch)+"*")
+            with torch.no_grad():
+                if indx_print == 1 and self.epoch == 1 :
+                    show_embeddings((out).cpu().detach().numpy(),target.cpu().detach().numpy(),title = "train_fisrt"+str(self.epoch)+"*")
             # print(out.size())
             loss = self.criterion(out, target)  # calculate loss
             
@@ -215,7 +234,8 @@ class Trainer:
         # print(target[0])
         # print(type((out[0].T).cpu().detach().numpy()))
         # print(target[0].cpu().detach().numpy())
-        show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "train"+str(self.epoch)+"*"+str(np.mean(train_losses)))
+        with torch.no_grad():
+            show_embeddings((out).cpu().detach().numpy(),target.cpu().detach().numpy(),title = "train"+str(self.epoch)+"*"+str(np.mean(train_losses)))
         self.training_loss.append(np.mean(train_losses))
         # self.training_acc.append(np.mean(train_acc))
         self.learning_rate.append(self.optimizer.param_groups[0]['lr'])
@@ -241,7 +261,8 @@ class Trainer:
                 print("loss=>",loss_value)
                 # valid_acc.append(acc.item())
                 # print(f'Validation: (loss {loss_value:.4f})')
-        show_embeddings((out[0].T).cpu().detach().numpy(),target[0].cpu().detach().numpy(),title = "val"+str(self.epoch)+"*"+str(np.mean(valid_losses)))
+        with torch.no_grad():
+            show_embeddings((out).cpu().detach().numpy(),target.cpu().detach().numpy(),title = "val"+str(self.epoch)+"*"+str(np.mean(valid_losses)))
         self.validation_loss.append(np.mean(valid_losses))
         # self.validation_acc.append(np.mean(valid_acc))
 
@@ -257,7 +278,7 @@ def main(cfg):
 
     print("=====>",hypers["optimizer.lr"])
 
-    data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[2,3,4,5,6])
+    data_set_train = Indoor3DSemSeg(num_points=4096,train=True,test_area=[3,4,5,6])
     # data_set_test  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[5])
 
     data_set_eval  = Indoor3DSemSeg(num_points=4096,train=False,test_area=[6])
